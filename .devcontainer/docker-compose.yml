@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  devcontainer:
+    build: .
+    environment:
+      - TZ=Asia/Seoul
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ../:/workspace/Gaeboptoday-Server
+    command: sleep infinity
+    depends_on:
+      - database
+
+  database:
+    image: postgres:16
+    container_name: database
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=Gaebop
+      - TZ=Asia/Seoul
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    restart: always
+
+volumes:
+  db-data:
