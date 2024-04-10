@@ -1,0 +1,10 @@
+Dockerfile
+.dockerignore
+node_modules
+npm-debug.log
+dist
+.devcontainer
+
+# linter files
+.eslintrc.js
+.prettierrc

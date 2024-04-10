@@ -1,0 +1,20 @@
+FROM node:20-alpine
+
+WORKDIR /usr/src/app
+
+RUN mkdir -p /workspace/.pnpm-store
+RUN chown -R 1001:1001 /workspace/.pnpm-store
+
+COPY package*.json/ ./
+
+RUN npm install -g pnpm
+RUN corepack enable
+RUN corepack enable npm
+
+RUN pnpm i
+RUN npm install -g @nestjs/cli
+COPY . .
+
+RUN npx prisma generate
+
+RUN pnpm build

@@ -4,12 +4,15 @@ import { ConfigService } from '@nestjs/config';
 import { randomUUID } from 'crypto';
 import { EnvironmentVariables } from '../config/config.validation';
 import { catchError, map } from 'rxjs';
+import { PrismaService } from '../prisma/prisma.service';
+import { DoW, menu, menu_imbed } from '@prisma/client';
 
 @Injectable()
 export class MenuService {
   constructor(
     private readonly httpservice: HttpService,
     private configservice: ConfigService<EnvironmentVariables>,
+    private readonly prismaservice: PrismaService,
   ) {}
 
   async ImageReading(image: Express.Multer.File): Promise<any> {
@@ -29,7 +32,7 @@ export class MenuService {
 
     const baseURL = this.configservice.get<string>('OCR_INVOKE_URL');
     const key = this.configservice.get<string>('NAVER_OCR_SECRET');
-    const result = await this.httpservice
+    const responseData = await this.httpservice
       .post(baseURL, formdata, {
         headers: { 'Content-Type': 'multipart/form-data', 'X-OCR-SECRET': key },
       })
@@ -39,6 +42,29 @@ export class MenuService {
         }),
       )
       .pipe(map((response) => response.data));
+
+    const result = await this.dataOrganization(responseData);
+
     return result;
+  }
+
+  async dataOrganization(data) {
+    const menus = [];
+    Object.values(DoW).forEach((date) => {
+      menus.push({
+        Day: date,
+        content: {
+          create: { lunch: [], dinner: [] },
+        },
+      });
+    });
+
+    await this.prismaservice.data.create({
+      data: {
+        content: {
+          create: menus,
+        },
+      },
+    });
   }
 }
