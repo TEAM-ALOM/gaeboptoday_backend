@@ -8,6 +8,8 @@ services:
     command: pnpm start:migrate:prod
     env_file:
       - .env.product
+    ports:
+      - 3000:3000
     depends_on:
       - database
 
