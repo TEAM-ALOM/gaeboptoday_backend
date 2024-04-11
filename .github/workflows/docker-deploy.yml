@@ -14,7 +14,7 @@ jobs:
     steps:
     - name: Pull Docker image
       run: sudo docker pull siyoun/gaeboptoday-server:latest
-    - name: remove Docker compose containers
-      run: sudo docker compose rm
+    - name: find docker compose
+      run: find / -name docker-compose.yml
     - name: build docker compose
       run: sudo docker compose up
