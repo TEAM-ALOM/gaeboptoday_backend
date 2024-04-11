@@ -18,4 +18,4 @@ jobs:
     - name: Delete Old docker container
       run: docker compose down
     - name: Run Docker Container
-      run: docker compose up -ㅇ
+      run: docker compose up -d
