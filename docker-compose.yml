@@ -4,13 +4,10 @@ services:
   main:
     environment:
       - TZ=Asia/Seoul
-    build: 
-      context: .
-      dockerfile: ./Dockerfile      
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ../:/workspace/Gaeboptoday-Server
-    command: node /dist/main.js
+    image: siyoun/gaeboptoday-server:latest
+    command: pnpm start:migrate:prod
+    env_file:
+      - .env.product
     depends_on:
       - database
 

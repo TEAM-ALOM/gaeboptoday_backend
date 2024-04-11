@@ -1,0 +1,20 @@
+name: CD Pipeline
+
+on:
+  workflow_run:
+    workflows: ['CI Pipeline']
+    types:
+      - completed
+
+jobs:
+  build:
+
+    runs-on: self-hosted
+
+    steps:
+    - name: Pull Docker image
+      run: sudo docker pull siyoun/gaeboptoday-server:latest
+    - name: remove Docker compose containers
+      run: sudo docker compose rm
+    - name: build docker compose
+      run: sudo docker compose up
