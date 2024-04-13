@@ -16,6 +16,6 @@ jobs:
     - name: Pull Docker image
       run: sudo docker pull siyoun/gaeboptoday-server:latest
     - name: Delete Old docker container
-      run: docker compose down
+      run: docker compose down --rmi all
     - name: Run Docker Container
       run: docker compose up -d
