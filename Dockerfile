@@ -1,4 +1,4 @@
-FROM siyoun/gaeboptoday-server
+FROM node:20-alpine
 
 ENV DATABASE_URL=postgresql://postgres:postgres@database:5432/gaeboptoday?schema=public
 
