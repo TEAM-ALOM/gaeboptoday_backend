@@ -3,7 +3,7 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { randomUUID } from 'crypto';
 import { EnvironmentVariables } from '../config/config.validation';
-import { catchError, map } from 'rxjs';
+import { catchError, firstValueFrom, map } from 'rxjs';
 import { PrismaService } from '../prisma/prisma.service';
 import { DoW, menu, menu_imbed } from '@prisma/client';
 
@@ -40,31 +40,51 @@ export class MenuService {
         catchError((e) => {
           throw new HttpException(e.response.data, e.response.status);
         }),
-      )
-      .pipe(map((response) => response.data));
+      );
 
-    const result = await this.dataOrganization(responseData);
+    const result = await this.dataOrganization(
+      (await firstValueFrom(responseData)).data,
+    );
 
     return result;
   }
 
   async dataOrganization(data) {
-    const menus = [];
-    Object.values(DoW).forEach((date) => {
-      menus.push({
-        Day: date,
+    const DoW = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+    const banned = ['중식', '석식'];
+    const menu = [];
+    console.log(data);
+    data.images[0].fields.forEach((item) => {
+      menu.push(item.inferText);
+    });
+    menu.filter((item) => {
+      !(item in banned);
+    });
+    while (menu[0] != '흰밥*흑미밥') {
+      console.log(menu[0]);
+      menu.shift();
+    }
+    while (menu.at(-1) != '야채샐러드') {
+      menu.pop();
+    }
+    console.log(menu);
+
+    const result = [];
+    for (let i = 0; i < 5; i++) {
+      const lunch = [],
+        dinner = [];
+
+      for (let j = 0; j < 11; j++) {
+        lunch.push(menu[(5 + i) * j] ? menu[(5 + i) * j] : "");
+        dinner.push(menu[(5 + i) * (j + 11)] ? menu[(5 + i) * (j + 11)] : "");
+      }
+      result.push({
+        Day: DoW[i],
         content: {
-          create: { lunch: [], dinner: [] },
+          create: { lunch: lunch, dinner: dinner },
         },
       });
-    });
-
-    await this.prismaservice.data.create({
-      data: {
-        content: {
-          create: menus,
-        },
-      },
-    });
+    }
+    return await this.prismaservice.data.create({ data: { content: { create: result } } });
   }
 }
