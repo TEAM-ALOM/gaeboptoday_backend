@@ -18,4 +18,6 @@ RUN npm install -g @nestjs/cli
 
 RUN npx prisma generate
 
+COPY . .
+
 RUN pnpm build
