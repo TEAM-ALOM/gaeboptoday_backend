@@ -52,22 +52,26 @@ export class MenuService {
   async dataOrganization(data) {
     const DoW = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
     const banned = ['중식', '석식'];
-    const menu = [];
-    console.log(data);
+    const goods = [];
     data.images[0].fields.forEach((item) => {
-      menu.push(item.inferText);
+      goods.push(item.inferText);
     });
-    menu.filter((item) => {
-      !(item in banned);
+    const menu = goods.filter((item) => {
+      return item != '중식' && item != '석식';
     });
     while (menu[0] != '흰밥*흑미밥') {
-      console.log(menu[0]);
       menu.shift();
     }
     while (menu.at(-1) != '야채샐러드') {
       menu.pop();
     }
-    console.log(menu);
+    for (let i = 0; i < 22; i++) {
+      for (let j = 0; j < 5; j++) {
+        process.stdout.write(menu[i * 5 + j] + ' ');
+      }
+      console.log();
+    }
+    console.dir(menu, { maxArrayLength: null });
 
     const result = [];
     for (let i = 0; i < 5; i++) {
@@ -75,8 +79,8 @@ export class MenuService {
         dinner = [];
 
       for (let j = 0; j < 11; j++) {
-        lunch.push(menu[(5 + i) * j] ? menu[(5 + i) * j] : "");
-        dinner.push(menu[(5 + i) * (j + 11)] ? menu[(5 + i) * (j + 11)] : "");
+        lunch.push(menu[5 * j + i] ? menu[5 * j + i] : '');
+        dinner.push(menu[5 * (11 + j) + i] ? menu[5 * (11 + j) + i] : '');
       }
       result.push({
         Day: DoW[i],
@@ -85,6 +89,9 @@ export class MenuService {
         },
       });
     }
-    return await this.prismaservice.data.create({ data: { content: { create: result } } });
+    await this.prismaservice.data.deleteMany();
+    return await this.prismaservice.data.create({
+      data: { content: { create: result } },
+    });
   }
 }

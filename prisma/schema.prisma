@@ -14,7 +14,7 @@ model data {
 
 model menu {
   id      String      @id @unique @default(uuid())
-  data    data?        @relation(fields: [dataId], references: [id])
+  data    data?        @relation(fields: [dataId], references: [id], onDelete: Cascade)
   dataId  String?
   Day     DoW
   content menu_imbed?
@@ -22,7 +22,7 @@ model menu {
 
 model menu_imbed {
   id     String   @id @unique @default(uuid())
-  menu   menu     @relation(fields: [menuId], references: [id])
+  menu   menu     @relation(fields: [menuId], references: [id], onDelete: Cascade)
   menuId String   @unique
   lunch  String[]
   dinner String[]
