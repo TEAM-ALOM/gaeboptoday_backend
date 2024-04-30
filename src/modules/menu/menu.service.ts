@@ -5,7 +5,7 @@ import { randomUUID } from 'crypto';
 import { EnvironmentVariables } from '../config/config.validation';
 import { catchError, firstValueFrom, map } from 'rxjs';
 import { PrismaService } from '../prisma/prisma.service';
-import { DoW, menu, menu_imbed } from '@prisma/client';
+import { DoW, data, menu, menu_imbed } from '@prisma/client';
 
 @Injectable()
 export class MenuService {
@@ -15,7 +15,7 @@ export class MenuService {
     private readonly prismaservice: PrismaService,
   ) {}
 
-  async ImageReading(image: Express.Multer.File): Promise<any> {
+  async ImageReading(image: Express.Multer.File): Promise<data> {
     const FormData = require('form-data');
     const formdata = new FormData();
     const message = {
@@ -49,9 +49,8 @@ export class MenuService {
     return result;
   }
 
-  async dataOrganization(data) {
+  async dataOrganization(data): Promise<data> {
     const DoW = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
-    const banned = ['중식', '석식'];
     const goods = [];
     data.images[0].fields.forEach((item) => {
       goods.push(item.inferText);

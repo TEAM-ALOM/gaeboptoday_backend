@@ -1,7 +1,15 @@
-import { Body, Controller, Get, Injectable, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Injectable,
+  Param,
+  Post,
+  Response,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { UserService } from './user.service';
-import CreateUserDto from './user.dto';
+import { CreateUserDto } from './user.dto';
 import { User } from '@prisma/client';
 import {
   ApiBody,
@@ -11,6 +19,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { ResponseDto } from 'src/types/response.dto';
 
 @ApiTags('사용자 API')
 @Injectable()
@@ -27,8 +36,12 @@ export class UserController {
     description: '사용자 생성 정보 DTO',
     type: CreateUserDto,
   })
-  async createUser(@Body() data: CreateUserDto): Promise<User> {
-    return await this.userservice.create(data);
+  @ApiResponse({
+    type: ResponseDto<User>,
+  })
+  async createUser(@Body() data: CreateUserDto): Promise<ResponseDto<User>> {
+    const result = await this.userservice.create(data);
+    return ResponseDto.created('create_success', result);
   }
 
   @Get('/:id')
@@ -38,13 +51,21 @@ export class UserController {
     type: String,
     description: '사용자 테이블에 저장되는 uuid',
   })
-  async getUser(@Param('id') id: string): Promise<User> {
-    return await this.userservice.getUser({ id: id });
+  @ApiResponse({
+    type: ResponseDto<User>,
+  })
+  async getUser(@Param('id') id: string): Promise<ResponseDto<User>> {
+    const result = await this.userservice.getUser({ id: id });
+    return ResponseDto.success('inquiry_success', result);
   }
 
   @Get()
   @ApiOperation({ summary: '다중 사용자 조회 API' })
-  async getUsers(): Promise<User[]> {
-    return await this.userservice.getUsers();
+  @ApiResponse({
+    type: ResponseDto<User[]>,
+  })
+  async getUsers(): Promise<ResponseDto<User[]>> {
+    const result = await this.userservice.getUsers();
+    return ResponseDto.success('inquiry_success', result);
   }
 }
