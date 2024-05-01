@@ -3,7 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { DataService } from './data.service';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ResponseDto } from 'src/types/response.dto';
-import { data } from '@prisma/client';
+import { Data } from '@prisma/client';
 
 @ApiTags('계밥 데이터 API')
 @Injectable()
@@ -18,10 +18,10 @@ export class DataController {
     summary: '이번주 계밥 데이터 가져오기',
   })
   @ApiResponse({
-    type: ResponseDto<data>,
+    type: ResponseDto<Data>,
   })
   @Get()
-  async getData(): Promise<ResponseDto<data>> {
+  async getData(): Promise<ResponseDto<Data>> {
     const result = await this.dataservice.getData();
     return ResponseDto.success('inqury_success', result);
   }

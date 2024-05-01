@@ -5,7 +5,7 @@ import { randomUUID } from 'crypto';
 import { EnvironmentVariables } from '../config/config.validation';
 import { catchError, firstValueFrom, map } from 'rxjs';
 import { PrismaService } from '../prisma/prisma.service';
-import { DoW, data, menu, menu_imbed } from '@prisma/client';
+import { Data, Weekly, Daily, Menu, DoW } from '@prisma/client';
 
 @Injectable()
 export class MenuService {
@@ -15,7 +15,7 @@ export class MenuService {
     private readonly prismaservice: PrismaService,
   ) {}
 
-  async ImageReading(image: Express.Multer.File): Promise<data> {
+  async ImageReading(image: Express.Multer.File): Promise<Data> {
     const FormData = require('form-data');
     const formdata = new FormData();
     const message = {
@@ -49,8 +49,9 @@ export class MenuService {
     return result;
   }
 
-  async dataOrganization(data): Promise<data> {
-    const DoW = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+  async dataOrganization(data): Promise<Data> {
+    const dow: DoW[] = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    const weeklies = [];
     const goods = [];
     data.images[0].fields.forEach((item) => {
       goods.push(item.inferText);
@@ -72,25 +73,58 @@ export class MenuService {
     }
     console.dir(menu, { maxArrayLength: null });
 
-    const result = [];
+    await this.prismaservice.menu.createMany({
+      data: menu.map((item) => {
+        return { name: item };
+      }),
+      skipDuplicates: true,
+    });
+
     for (let i = 0; i < 5; i++) {
-      const lunch = [],
-        dinner = [];
+      const lunch: string[] = [],
+        dinner: string[] = [];
 
       for (let j = 0; j < 11; j++) {
         lunch.push(menu[5 * j + i] ? menu[5 * j + i] : '');
         dinner.push(menu[5 * (11 + j) + i] ? menu[5 * (11 + j) + i] : '');
       }
-      result.push({
-        Day: DoW[i],
-        content: {
-          create: { lunch: lunch, dinner: dinner },
+
+      const daily = await this.prismaservice.daily.create({
+        data: {
+          lunch: {
+            connect: lunch.map((item) => {
+              return { name: item };
+            }),
+          },
+          dinner: {
+            connect: dinner.map((item) => {
+              return { name: item };
+            }),
+          },
         },
       });
+
+      const weekly = await this.prismaservice.weekly.create({
+        data: {
+          day: dow[i],
+          content: {
+            connect: { id: daily.id },
+          },
+        },
+      });
+      weeklies.push(weekly.id);
     }
+
     await this.prismaservice.data.deleteMany();
+
     return await this.prismaservice.data.create({
-      data: { content: { create: result } },
+      data: {
+        content: {
+          connect: weeklies.map((item) => {
+            return { id: item };
+          }),
+        },
+      },
     });
   }
 }

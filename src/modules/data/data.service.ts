@@ -7,7 +7,7 @@ export class DataService {
 
   async getData() {
     return await this.prismaservice.data.findFirst({
-      include: { content: { include: { content: true } } },
+      include: { content: { include: { content: { include: { lunch: true, dinner: true } } } } },
     });
   }
 }

@@ -12,25 +12,38 @@ model User {
   name String @unique
 }
 
-model data {
-  id      String @id @unique @default(uuid())
-  content menu[]
+model Menu {
+  name String @unique() @id
+  review Review[]
+  lunches Daily[] @relation("daily_lunch")
+  dinners Daily[] @relation("daily_dinner")
 }
 
-model menu {
-  id      String      @id @unique @default(uuid())
-  data    data?        @relation(fields: [dataId], references: [id], onDelete: Cascade)
-  dataId  String?
-  Day     DoW
-  content menu_imbed?
-}
-
-model menu_imbed {
+model Daily {
   id     String   @id @unique @default(uuid())
-  menu   menu     @relation(fields: [menuId], references: [id], onDelete: Cascade)
-  menuId String   @unique
-  lunch  String[]
-  dinner String[]
+  weekly Weekly?     @relation(fields: [weeklyId], references: [id], onDelete: Cascade)
+  weeklyId String? 
+  lunch  Menu[] @relation("daily_lunch")
+  dinner Menu[] @relation("daily_dinner")
+}
+
+model Review {
+  id Int @id @unique @default(autoincrement())
+  menu Menu? @relation(fields: [menu_name], references: [name], onDelete: Cascade)
+  menu_name String?
+}
+
+model Data {
+  id      String @id @unique @default(uuid())
+  content Weekly[]
+}
+
+model Weekly {
+  id      String      @id @unique @default(uuid())
+  data    Data?        @relation(fields: [dataId], references: [id], onDelete: Cascade)
+  dataId  String?
+  day     DoW
+  content Daily[]
 }
 
 enum DoW {
