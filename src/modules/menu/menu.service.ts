@@ -1,5 +1,5 @@
 import { HttpService } from '@nestjs/axios';
-import { HttpException, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { randomUUID } from 'crypto';
 import { EnvironmentVariables } from '../config/config.validation';
@@ -50,6 +50,11 @@ export class MenuService {
   }
 
   async dataOrganization(data): Promise<Data> {
+    if (data.images[0].message != 'SUCCESS') {
+      throw new BadRequestException('이미지가 잘못되었습니다.');
+    } else if (data.images[0].fields.length < 10)  {
+      throw new BadRequestException('이미지가 잘못되었습니다.');
+    } 
     const dow: DoW[] = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
     const weeklies = [];
     const goods = [];
@@ -57,7 +62,9 @@ export class MenuService {
       goods.push(item.inferText);
     });
     const menu = goods.filter((item) => {
-      return item != '중식' && item != '석식';
+      return (
+        item != '중식' && item != '석식' && item != '중 식' && item != '석 식'
+      );
     });
     while (menu[0] != '흰밥*흑미밥') {
       menu.shift();
@@ -72,6 +79,9 @@ export class MenuService {
       console.log();
     }
     console.dir(menu, { maxArrayLength: null });
+    if (menu.length < 100) {
+      throw new BadRequestException('이미지가 잘못되었습니다.');
+    }
 
     await this.prismaservice.menu.createMany({
       data: menu.map((item) => {
