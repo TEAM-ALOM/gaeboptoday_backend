@@ -10,8 +10,6 @@ RUN chown -R 1001:1001 /workspace/.pnpm-store
 COPY package*.json/ ./
 
 RUN npm install -g pnpm
-RUN corepack enable
-RUN corepack enable npm
 
 RUN pnpm i
 RUN npm install -g @nestjs/cli
