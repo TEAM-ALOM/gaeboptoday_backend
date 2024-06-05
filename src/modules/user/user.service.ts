@@ -11,9 +11,9 @@ export class UserService {
     return await this.prismaservice.user.create({ data });
   }
 
-  async getUser(userWhereUniqueInput: Prisma.UserWhereUniqueInput) {
+  async getUser(studentCode: string) {
     return await this.prismaservice.user.findUnique({
-      where: userWhereUniqueInput,
+      where: { studentCode: studentCode },
     });
   }
 

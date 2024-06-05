@@ -8,8 +8,9 @@ datasource db {
 }
 
 model User {
-  id String @id @unique @default(uuid())
+  studentCode String @id @unique
   name String @unique
+  review Review[]
 }
 
 model Menu {
@@ -21,7 +22,7 @@ model Menu {
 
 model Daily {
   id     String   @id @unique @default(uuid())
-  weekly Weekly?     @relation(fields: [weeklyId], references: [id], onDelete: Cascade)
+  weekly Weekly?     @relation(fields: [weeklyId], references: [id], onDelete: SetNull)
   weeklyId String? 
   lunch  Menu[] @relation("daily_lunch")
   dinner Menu[] @relation("daily_dinner")
@@ -31,16 +32,19 @@ model Review {
   id Int @id @unique @default(autoincrement())
   menu Menu? @relation(fields: [menu_name], references: [name], onDelete: Cascade)
   menu_name String?
+  writer User? @relation(fields: [writer_id], references: [studentCode], onDelete: Cascade)
+  writer_id String?
 }
 
 model Data {
   id      String @id @unique @default(uuid())
   content Weekly[]
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
 }
 
 model Weekly {
   id      String      @id @unique @default(uuid())
-  data    Data?        @relation(fields: [dataId], references: [id], onDelete: Cascade)
+  data    Data?        @relation(fields: [dataId], references: [id], onDelete: SetNull)
   dataId  String?
   day     DoW
   content Daily[]

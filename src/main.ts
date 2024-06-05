@@ -6,6 +6,11 @@ import { VersioningType } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  app.enableVersioning({
+    type: VersioningType.URI
+  });
+  app.setGlobalPrefix('/api');
+
   const config = new DocumentBuilder()
     .setTitle('계밥 api')
     .setDescription('계절밥상 api서버에서 사용되는 api문서입니다.')
@@ -13,11 +18,6 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
-
-  app.enableVersioning({
-    type: VersioningType.URI
-  });
-  app.setGlobalPrefix('/api');
 
   await app.listen(3000);
 }

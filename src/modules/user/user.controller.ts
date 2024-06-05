@@ -55,7 +55,7 @@ export class UserController {
     type: ResponseDto<User>,
   })
   async getUser(@Param('id') id: string): Promise<ResponseDto<User>> {
-    const result = await this.userservice.getUser({ id: id });
+    const result = await this.userservice.getUser(id);
     return ResponseDto.success('inquiry_success', result);
   }
 
