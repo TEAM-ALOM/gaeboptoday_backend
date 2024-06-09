@@ -5,7 +5,7 @@ import { randomUUID } from 'crypto';
 import { EnvironmentVariables } from '../config/config.validation';
 import { catchError, firstValueFrom, map } from 'rxjs';
 import { PrismaService } from '../prisma/prisma.service';
-import { Data, Weekly, Daily, Menu, DoW } from '@prisma/client';
+import { Data, Weekly, Daily, Menu } from '@prisma/client';
 
 @Injectable()
 export class MenuService {
@@ -55,13 +55,18 @@ export class MenuService {
     } else if (data.images[0].fields.length < 3) {
       throw new BadRequestException('이미지가 잘못되었습니다.');
     }
+    const dates = [];
     console.log(data);
-    const dow: DoW[] = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
     const weeklies: string[][] = [];
     const weeklyIds = [];
+    const offset = 9 * 60 * 60 * 1000;
     for (let i = 0; i < data.images[0].fields.length; i++) {
       const temp = data.images[0].fields[i].inferText.split('\n');
-      temp.shift();
+      const date = temp.shift();
+      const dow = date.split('(')[0];
+      const month = date.split('(')[1].split('/')[0];
+      const day = date.split('/')[1].slice(0, -1);
+      dates.push([dow, month, day]);
       weeklies.push(temp);
     }
 
@@ -86,7 +91,6 @@ export class MenuService {
         lunch.push(weeklies[i][j] ? weeklies[i][j] : '');
         dinner.push(weeklies[i][j + range] ? weeklies[i][j + range] : '');
       }
-
       const daily = await this.prismaservice.daily.create({
         data: {
           lunch: {
@@ -102,9 +106,10 @@ export class MenuService {
         },
       });
 
+      const rawDate = new Date(`${2024}-${dates[i][1]}-${dates[i][2]}`);
       const weeklyData = await this.prismaservice.weekly.create({
         data: {
-          day: dow[i],
+          day: new Date(rawDate.getTime() + offset),
           content: {
             connect: { id: daily.id },
           },

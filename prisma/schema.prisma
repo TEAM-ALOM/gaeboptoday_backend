@@ -13,6 +13,11 @@ model User {
   review Review[]
 }
 
+model Image {
+  urlPath String @id @unique
+  mimeType String
+}
+
 model Menu {
   name String @unique() @id
   review Review[]
@@ -46,16 +51,6 @@ model Weekly {
   id      String      @id @unique @default(uuid())
   data    Data?        @relation(fields: [dataId], references: [id], onDelete: SetNull)
   dataId  String?
-  day     DoW
+  day     DateTime
   content Daily[]
-}
-
-enum DoW {
-  Mon
-  Tue
-  Wed
-  Thu
-  Fri
-  Sat
-  Sun
 }
