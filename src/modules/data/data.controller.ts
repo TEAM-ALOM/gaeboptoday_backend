@@ -1,7 +1,7 @@
-import { Controller, Get, Injectable } from '@nestjs/common';
+import { Controller, Get, Injectable, Param } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { DataService } from './data.service';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ResponseDto } from 'src/types/response.dto';
 import { Data } from '@prisma/client';
 
@@ -24,5 +24,18 @@ export class DataController {
   async getData(): Promise<ResponseDto<Data>> {
     const result = await this.dataservice.getData();
     return ResponseDto.success('inqury_success', result);
+  }
+
+  @ApiOperation({
+    summary: '데이터 확증',
+  })
+  @ApiParam({
+    name: 'id',
+    type: String,
+    description: 'OCR 인증을 보낸 후 생성된 데이터의 id',
+  })
+  @Get('/:id')
+  async applyData(@Param('id') id: string) {
+    const result = await this.dataservice.deleteManyExceptOne(id);
   }
 }
