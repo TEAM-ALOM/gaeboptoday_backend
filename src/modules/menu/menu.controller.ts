@@ -10,12 +10,13 @@ import { MenuService } from './menu.service';
 import { ApiBody, ApiConsumes, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ResponseDto } from 'src/types/response.dto';
 import { Data } from '@prisma/client';
+import { DataService } from '../data/data.service';
 
 @ApiTags('이미지 OCR api')
 @Injectable()
 @Controller('/menu')
 export class MenuController {
-  constructor(private readonly menuservice: MenuService) {}
+  constructor(private readonly menuservice: MenuService, private readonly dataservice: DataService) {}
 
   @Post('/upload')
   @ApiOperation({
@@ -38,9 +39,11 @@ export class MenuController {
     type: ResponseDto<Data>,
   })
   @UseInterceptors(FileInterceptor('image'))
-  async uploadMenuImage(@UploadedFile() file: Express.Multer.File): Promise<ResponseDto<Data>> {
+  async uploadMenuImage(@UploadedFile() file: Express.Multer.File): Promise<ResponseDto<any>> {
     const result = await this.menuservice.ImageReading(file);
 
-    return ResponseDto.created('ocr_success', result);
+    const data = await this.dataservice.getData();
+
+    return ResponseDto.created('ocr_success', { result: data });
   }
 }

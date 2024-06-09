@@ -52,51 +52,39 @@ export class MenuService {
   async dataOrganization(data): Promise<Data> {
     if (data.images[0].message != 'SUCCESS') {
       throw new BadRequestException('이미지가 잘못되었습니다.');
-    } else if (data.images[0].fields.length < 10)  {
+    } else if (data.images[0].fields.length < 3) {
       throw new BadRequestException('이미지가 잘못되었습니다.');
-    } 
+    }
+    console.log(data);
     const dow: DoW[] = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-    const weeklies = [];
-    const goods = [];
-    data.images[0].fields.forEach((item) => {
-      goods.push(item.inferText);
-    });
-    const menu = goods.filter((item) => {
-      return (
-        item != '중식' && item != '석식' && item != '중 식' && item != '석 식'
-      );
-    });
-    while (menu[0] != '흰밥*흑미밥') {
-      menu.shift();
-    }
-    while (menu.at(-1) != '야채샐러드') {
-      menu.pop();
-    }
-    for (let i = 0; i < 22; i++) {
-      for (let j = 0; j < 5; j++) {
-        process.stdout.write(menu[i * 5 + j] + ' ');
-      }
-      console.log();
-    }
-    console.dir(menu, { maxArrayLength: null });
-    if (menu.length < 100) {
-      throw new BadRequestException('이미지가 잘못되었습니다.');
+    const weeklies: string[][] = [];
+    const weeklyIds = [];
+    for (let i = 0; i < data.images[0].fields.length; i++) {
+      const temp = data.images[0].fields[i].inferText.split('\n');
+      temp.shift();
+      weeklies.push(temp);
     }
 
-    await this.prismaservice.menu.createMany({
-      data: menu.map((item) => {
-        return { name: item };
-      }),
-      skipDuplicates: true,
+    weeklies.forEach(async (daily) => {
+      await this.prismaservice.menu.createMany({
+        data: daily.map((item) => {
+          return { name: item };
+        }),
+        skipDuplicates: true,
+      });
     });
 
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < weeklies.length; i++) {
       const lunch: string[] = [],
         dinner: string[] = [];
 
-      for (let j = 0; j < 11; j++) {
-        lunch.push(menu[5 * j + i] ? menu[5 * j + i] : '');
-        dinner.push(menu[5 * (11 + j) + i] ? menu[5 * (11 + j) + i] : '');
+      const range = Math.round(weeklies[i].length / 2);
+      for (let j = 0; j < range; j++) {
+        if (range < 8) {
+          break;
+        }
+        lunch.push(weeklies[i][j] ? weeklies[i][j] : '');
+        dinner.push(weeklies[i][j + range] ? weeklies[i][j + range] : '');
       }
 
       const daily = await this.prismaservice.daily.create({
@@ -114,7 +102,7 @@ export class MenuService {
         },
       });
 
-      const weekly = await this.prismaservice.weekly.create({
+      const weeklyData = await this.prismaservice.weekly.create({
         data: {
           day: dow[i],
           content: {
@@ -122,15 +110,13 @@ export class MenuService {
           },
         },
       });
-      weeklies.push(weekly.id);
+      weeklyIds.push(weeklyData.id);
     }
-
-    await this.prismaservice.data.deleteMany();
 
     return await this.prismaservice.data.create({
       data: {
         content: {
-          connect: weeklies.map((item) => {
+          connect: weeklyIds.map((item) => {
             return { id: item };
           }),
         },
