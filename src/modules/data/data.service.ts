@@ -12,8 +12,8 @@ export class DataService {
           include: { content: { include: { lunch: true, dinner: true } } },
         },
       },
-      orderBy: { createdAt: 'asc' },
-    });
+      orderBy: { createdAt: 'desc' },
+    })
   }
 
   async deleteManyExceptOne(id: string) {
