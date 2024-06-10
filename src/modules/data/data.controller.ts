@@ -1,9 +1,16 @@
-import { Controller, Get, Injectable, Param } from '@nestjs/common';
+import { Body, Controller, Get, Injectable, Param, Post } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { DataService } from './data.service';
-import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { ResponseDto } from 'src/types/response.dto';
 import { Data } from '@prisma/client';
+import { DataQueryDto } from './types/query.type';
 
 @ApiTags('계밥 데이터 API')
 @Injectable()
@@ -24,6 +31,21 @@ export class DataController {
   async getData(): Promise<ResponseDto<Data>> {
     const result = await this.dataservice.getData();
     return ResponseDto.success('inqury_success', result);
+  }
+
+  @ApiOperation({
+    summary: '계밥 쿼리',
+  })
+  @ApiResponse({
+    type: ResponseDto<Data | Data[]>,
+  })
+  @ApiBody({
+    type: DataQueryDto,
+  })
+  @Post()
+  async queryData(@Body() data: DataQueryDto): Promise<ResponseDto<Data | Data[]>> {
+    const result = await this.dataservice.queryData(data);
+    return ResponseDto.success('inquery_success', result);
   }
 
   @ApiOperation({
