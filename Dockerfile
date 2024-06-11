@@ -12,9 +12,10 @@ RUN npm install -g pnpm
 
 RUN pnpm i
 RUN npm install -g @nestjs/cli
+RUN npm install -g prisma
 
 COPY . .
 
-RUN npx prisma generate
+RUN prisma generate
 
 RUN pnpm build
