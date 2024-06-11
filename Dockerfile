@@ -16,6 +16,5 @@ RUN npm install -g @nestjs/cli
 COPY . .
 
 RUN npx prisma generate
-RUN npx prisma db push
 
 RUN pnpm build

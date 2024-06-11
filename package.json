@@ -12,7 +12,7 @@
     "start:dev": "export NODE_ENV=development; nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "export NODE_ENV=product; node ./dist/main",
-    "start:migrate:prod": "prisma migrate deploy; export NODE_ENV=product; node ./dist/main",
+    "start:migrate:prod": "npx prisma migrate deploy; export NODE_ENV=product; node ./dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -21,6 +21,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.592.0",
     "@coffee-tree/sejong-auth-delegator": "^1.1.3",
     "@nestjs/axios": "^3.0.2",
     "@nestjs/common": "^10.0.0",
