@@ -13,7 +13,6 @@ export class JwtAccessGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
-    console.log(request);
     const token = this.extractTokenFromHeader(request);
     if (!token) {
       throw new UnauthorizedException();
@@ -22,7 +21,8 @@ export class JwtAccessGuard implements CanActivate {
       const payload = await this.jwtService.verifyAsync(token, {
         secret: '1234qwer',
       });
-      request.user = payload.user;
+      console.log(payload);
+      request.user = payload;
     } catch {
       throw new UnauthorizedException();
     }

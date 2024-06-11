@@ -7,6 +7,18 @@ export class EnvironmentVariables {
 
   @IsString()
   OCR_INVOKE_URL: string;
+
+  @IsString()
+  AWS_REGION: string;
+
+  @IsString()
+  AWS_S3_ACCESS_KEY: string;
+
+  @IsString()
+  AWS_S3_SECRET_ACCESS_KEY: string;
+
+  @IsString()
+  AWS_S3_BUCKET_NAME: string;
 }
 
 export const validate = (config: Record<string, unknown>) => {

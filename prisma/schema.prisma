@@ -26,8 +26,8 @@ model MenuReview {
   menu Menu? @relation(fields: [menu_name], references: [name])
   menu_name String @unique()
   reviews Review[]
-  review_id String
-  rate Float
+  review_id String?
+  rate Float @default(0)
 }
 
 model Menu {
@@ -56,9 +56,9 @@ model Daily {
 }
 
 model Review {
-  id Int @id @unique @default(autoincrement())
-  review_id String
-  menuReview MenuReview? @relation(fields: [review_id], references: [id])
+  id     String   @id @unique @default(uuid())
+  rateId String
+  menuReview MenuReview? @relation(fields: [rateId], references: [id])
   writer User? @relation(fields: [writer_id], references: [studentCode], onDelete: Cascade)
   writer_id String?
   rate Float

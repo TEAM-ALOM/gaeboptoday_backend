@@ -34,7 +34,6 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ): Promise<ResponseDto<any>> {
     const loginData = await this.authservice.login(data);
-    console.log(loginData);
     if (!loginData) {
       throw new UnauthorizedException('login_failed');
     }
@@ -44,10 +43,8 @@ export class AuthController {
     };
 
     const user = await this.userservice.getUser(loginData.studentCode);
-    console.log(user);
     if (!user) {
       const result = await this.userservice.create(payload);
-      console.log(result);
     }
 
     const access_token = this.authservice.createAccessToken(payload);

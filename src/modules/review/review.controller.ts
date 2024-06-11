@@ -38,7 +38,7 @@ export class ReviewController {
     @Req() request: any,
     @Body() data: CreateReviewDto,
   ): Promise<ResponseDto<Review>> {
-    const result = await this.reviewservice.create(data, request.user.id);
+    const result = await this.reviewservice.create(data, request.user.studentCode);
     return ResponseDto.created('create_success', result);
   }
 }
