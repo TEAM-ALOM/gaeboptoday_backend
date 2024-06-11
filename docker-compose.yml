@@ -5,7 +5,7 @@ services:
     environment:
       - TZ=Asia/Seoul
     image: siyoun/gaeboptoday-server:latest
-    command: npm start:prod
+    command: pnpm start:prod
     env_file:
       - .env.product
     ports:
