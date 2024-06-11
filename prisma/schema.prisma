@@ -16,13 +16,25 @@ model User {
 model Image {
   urlPath String @id @unique
   mimeType String
+  menu Menu? @relation(fields: [menu_name], references: [name])
+  menu_name String? @unique
+}
+
+model MenuReview {
+  id String   @id @unique @default(uuid())
+  menu Menu? @relation(fields: [menu_name], references: [name])
+  menu_name String @unique()
+  reviews Review[]
+  review_id String
 }
 
 model Menu {
   name String @unique() @id
-  review Review[]
+  menuReview MenuReview?
   lunches Daily[] @relation("daily_lunch")
   dinners Daily[] @relation("daily_dinner")
+  rating Float
+  image Image?
 }
 
 model Daily {
@@ -35,10 +47,11 @@ model Daily {
 
 model Review {
   id Int @id @unique @default(autoincrement())
-  menu Menu? @relation(fields: [menu_name], references: [name], onDelete: Cascade)
-  menu_name String?
+  review_id String
+  menuReview MenuReview @relation(fields: [review_id], references: [id])
   writer User? @relation(fields: [writer_id], references: [studentCode], onDelete: Cascade)
   writer_id String?
+  rate Float
 }
 
 model Data {

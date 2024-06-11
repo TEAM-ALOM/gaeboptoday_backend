@@ -10,6 +10,7 @@ export class ReviewService {
   async create(data: CreateReviewDto, studentCcode: string): Promise<Review> {
     const createInput = {
       menu: { connect: { name: data.menu } },
+      rate: data.rate,
       writer: { connect: { studentCode: studentCcode } },
     };
 
