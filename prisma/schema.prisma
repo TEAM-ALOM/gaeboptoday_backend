@@ -11,6 +11,7 @@ model User {
   studentCode String @id @unique
   name String @unique
   review Review[]
+  star Star[]
 }
 
 model Image {
@@ -26,6 +27,7 @@ model MenuReview {
   menu_name String @unique()
   reviews Review[]
   review_id String
+  rate Float
 }
 
 model Menu {
@@ -33,8 +35,16 @@ model Menu {
   menuReview MenuReview?
   lunches Daily[] @relation("daily_lunch")
   dinners Daily[] @relation("daily_dinner")
-  rating Float
   image Image?
+  star Star[]
+}
+
+model Star {
+  id String @id @default(uuid())
+  owner User @relation(fields: [user_id], references: [studentCode])
+  user_id String
+  target Menu @relation(fields: [menu_name], references: [name])
+  menu_name String
 }
 
 model Daily {
@@ -48,7 +58,7 @@ model Daily {
 model Review {
   id Int @id @unique @default(autoincrement())
   review_id String
-  menuReview MenuReview @relation(fields: [review_id], references: [id])
+  menuReview MenuReview? @relation(fields: [review_id], references: [id])
   writer User? @relation(fields: [writer_id], references: [studentCode], onDelete: Cascade)
   writer_id String?
   rate Float
