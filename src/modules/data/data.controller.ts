@@ -9,7 +9,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { ResponseDto } from 'src/types/response.dto';
-import { Data } from '@prisma/client';
+import { Data, Weekly } from '@prisma/client';
 import { DataQueryDto } from './types/query.type';
 
 @ApiTags('계밥 데이터 API')
@@ -43,7 +43,7 @@ export class DataController {
     type: DataQueryDto,
   })
   @Post()
-  async queryData(@Body() data: DataQueryDto): Promise<ResponseDto<Data | Data[]>> {
+  async queryData(@Body() data: DataQueryDto): Promise<ResponseDto<Data | Data[] | Weekly>> {
     const result = await this.dataservice.queryData(data);
     return ResponseDto.success('inquery_success', result);
   }

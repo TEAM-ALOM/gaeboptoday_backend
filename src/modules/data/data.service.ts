@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Data } from '@prisma/client';
+import { Data, Weekly } from '@prisma/client';
 import { DataQueryDto } from './types/query.type';
 
 @Injectable()
@@ -18,26 +18,39 @@ export class DataService {
     });
   }
 
-  async queryData(queryRaw: DataQueryDto): Promise<Data[] | Data> {
+  async queryData(queryRaw: DataQueryDto): Promise<Data[] | Data | Weekly> {
     const offset = 9 * 60 * 60 * 1000;
     const queryDate =
       new Date(`${2024}-${queryRaw.month}-${queryRaw.day}`).getTime() + offset;
-    return await this.prismaservice.data.findMany({
-      include: {
-        content: {
-          include: { content: { include: { lunch: true, dinner: true } } },
+    if (queryRaw.type == 0) {
+      return await this.prismaservice.weekly.findFirst({
+        include: {
+          content: {
+            include: { lunch: true, dinner: true },
+          },
         },
-      },
-      where: {
-        content: {
-          some: {
-            day: {
-              equals: new Date(queryDate),
+        where: {
+          day: { equals: new Date(queryDate) },
+        },
+      });
+    } else {
+      return await this.prismaservice.data.findMany({
+        include: {
+          content: {
+            include: { content: { include: { lunch: true, dinner: true } } },
+          },
+        },
+        where: {
+          content: {
+            some: {
+              day: {
+                equals: new Date(queryDate),
+              },
             },
           },
         },
-      },
-    });
+      });
+    }
   }
 
   async deleteManyExceptOne(id: string) {
