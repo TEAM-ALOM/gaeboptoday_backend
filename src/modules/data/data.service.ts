@@ -23,7 +23,8 @@ export class DataService {
     const queryDate =
       new Date(`${2024}-${queryRaw.month}-${queryRaw.day}`).getTime() + offset;
     if (queryRaw.type == 0) {
-      return await this.prismaservice.weekly.findFirst({
+      const result = [];
+      const data = await this.prismaservice.weekly.findFirst({
         include: {
           content: {
             include: { lunch: true, dinner: true },
@@ -33,6 +34,8 @@ export class DataService {
           day: { equals: new Date(queryDate) },
         },
       });
+      result.push(data);
+      return result;
     } else {
       return await this.prismaservice.data.findMany({
         include: {
