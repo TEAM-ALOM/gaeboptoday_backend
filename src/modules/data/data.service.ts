@@ -11,7 +11,14 @@ export class DataService {
     return await this.prismaservice.data.findFirst({
       include: {
         content: {
-          include: { content: { include: { lunch: true, dinner: true } } },
+          include: {
+            content: {
+              include: {
+                lunch: { include: { reviews: true } },
+                dinner: { include: { reviews: true } },
+              },
+            },
+          },
         },
       },
       orderBy: { createdAt: 'desc' },
@@ -27,7 +34,10 @@ export class DataService {
       const data = await this.prismaservice.weekly.findFirst({
         include: {
           content: {
-            include: { lunch: true, dinner: true },
+            include: {
+              lunch: { include: { reviews: true } },
+              dinner: { include: { reviews: true } },
+            },
           },
         },
         where: {
@@ -40,7 +50,14 @@ export class DataService {
       return await this.prismaservice.data.findMany({
         include: {
           content: {
-            include: { content: { include: { lunch: true, dinner: true } } },
+            include: {
+              content: {
+                include: {
+                  lunch: { include: { reviews: true } },
+                  dinner: { include: { reviews: true } },
+                },
+              },
+            },
           },
         },
         where: {
