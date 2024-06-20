@@ -21,21 +21,13 @@ model Image {
   menu_name String? @unique
 }
 
-model MenuReview {
-  id String   @id @unique @default(uuid())
-  menu Menu? @relation(fields: [menu_name], references: [name])
-  menu_name String @unique()
-  reviews Review[]
-  review_id String?
-  rate Float @default(0)
-}
-
 model Menu {
   name String @unique() @id
-  menuReview MenuReview?
+  reviews Review[]
   lunches Daily[] @relation("daily_lunch")
   dinners Daily[] @relation("daily_dinner")
   image Image?
+  rating Float @default(0)
   star Star[]
 }
 
@@ -57,11 +49,12 @@ model Daily {
 
 model Review {
   id     String   @id @unique @default(uuid())
-  rateId String
-  menuReview MenuReview? @relation(fields: [rateId], references: [id])
+  menu Menu @relation(fields: [menu_name], references: [name])
+  menu_name String
   writer User? @relation(fields: [writer_id], references: [studentCode], onDelete: Cascade)
   writer_id String?
   rate Float
+  substance String?
 }
 
 model Data {

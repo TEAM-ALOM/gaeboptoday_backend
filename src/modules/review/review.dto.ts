@@ -17,4 +17,11 @@ export class CreateReviewDto {
   })
   @IsNumber()
   rate: number;
+
+  @ApiProperty({
+    example: '맛있고 든든해요 제 최애 메뉴입니다.',
+    description: '리뷰 대상 메뉴의 리뷰 내용입니다.',
+  })
+  @IsString()
+  substance: string;
 }
