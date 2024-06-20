@@ -13,9 +13,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Pull Docker image
-      run: sudo docker pull siyoun/gaeboptoday-server:latest
     - name: Delete Old docker container
       run: docker compose down --rmi all
+    - name: Pull Docker image
+      run: sudo docker pull siyoun/gaeboptoday-server:latest
     - name: Run Docker Container
       run: docker compose up -d
