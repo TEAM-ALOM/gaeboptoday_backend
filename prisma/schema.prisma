@@ -48,9 +48,9 @@ model Review {
   writer_id String?
   rate Float
   substance String?
-  // month Int
-  // day Int
-  // diet Int
+  month Int
+  day Int
+  diet Int
 }
 
 model Data {
