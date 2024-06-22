@@ -14,19 +14,12 @@ model User {
   star Star[]
 }
 
-model Image {
-  urlPath String @id @unique
-  mimeType String
-  menu Menu? @relation(fields: [menu_name], references: [name])
-  menu_name String? @unique
-}
-
 model Menu {
   name String @unique() @id
   reviews Review[]
   lunches Daily[] @relation("daily_lunch")
   dinners Daily[] @relation("daily_dinner")
-  image Image?
+  imagePath String?
   rating Float @default(0)
   star Star[]
 }
@@ -55,6 +48,9 @@ model Review {
   writer_id String?
   rate Float
   substance String?
+  // month Int
+  // day Int
+  // diet Int
 }
 
 model Data {
