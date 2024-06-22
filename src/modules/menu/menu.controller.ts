@@ -1,22 +1,36 @@
 import {
   Controller,
+  Get,
   Injectable,
+  Param,
   Post,
+  Req,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { MenuService } from './menu.service';
-import { ApiBody, ApiConsumes, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiConsumes,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { ResponseDto } from 'src/types/response.dto';
-import { Data } from '@prisma/client';
+import { Data, Menu } from '@prisma/client';
 import { DataService } from '../data/data.service';
+import { JwtAccessGuard } from '../auth/guard/jwt-access.guard';
 
-@ApiTags('이미지 OCR api')
+@ApiTags('메뉴 관련 api')
 @Injectable()
 @Controller('/menu')
 export class MenuController {
-  constructor(private readonly menuservice: MenuService, private readonly dataservice: DataService) {}
+  constructor(
+    private readonly menuservice: MenuService,
+    private readonly dataservice: DataService,
+  ) {}
 
   @Post('/upload')
   @ApiOperation({
@@ -39,11 +53,50 @@ export class MenuController {
     type: ResponseDto<Data>,
   })
   @UseInterceptors(FileInterceptor('image'))
-  async uploadMenuImage(@UploadedFile() file: Express.Multer.File): Promise<ResponseDto<any>> {
+  async uploadMenuImage(
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<ResponseDto<any>> {
     const result = await this.menuservice.ImageReading(file);
 
     const data = await this.dataservice.getData();
 
     return ResponseDto.created('ocr_success', { result: data });
+  }
+
+  @Get()
+  @ApiOperation({
+    summary: '메뉴 전부 가져오기',
+  })
+  @ApiResponse({
+    type: ResponseDto<Menu[]>,
+  })
+  async getMenus() {
+    const result = await this.menuservice.findMany();
+
+    return ResponseDto.success('inquiry_success', result);
+  }
+
+  
+  @Get('/:name')
+  async getMenu(@Param('name') name: string): Promise<ResponseDto<Menu>> {
+    const result = await this.menuservice.findOneByName(name);
+    
+    return ResponseDto.success('inquiry_success', result);
+  }
+
+  @Post('/:name')
+  @ApiOperation({
+    summary: '메뉴 즐겨찾기',
+  })
+  @UseGuards(JwtAccessGuard)
+  async starMenu(@Param('name') name: string, @Req() request) {
+    const result = await this.menuservice.starMenu(
+      name,
+      request.user.studentCode,
+    );
+
+    if (result) {
+      return ResponseDto.created('bookmark_success');
+    }
   }
 }

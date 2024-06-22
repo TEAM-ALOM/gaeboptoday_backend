@@ -24,4 +24,25 @@ export class CreateReviewDto {
   })
   @IsString()
   substance: string;
+
+  @ApiProperty({
+    example: 12,
+    description: '리뷰 대상 메뉴가 나온 월입니다.',
+  })
+  @IsNumber()
+  month: number;
+
+  @ApiProperty({
+    example: 6,
+    description: '리뷰 대상 메뉴가 나온 일입니다.',
+  })
+  @IsNumber()
+  day: number;
+
+  @ApiProperty({
+    example: 0,
+    description: '리뷰 대상 메뉴가 나온 식단입니다. 0 - 점심, 1 - 저녁',
+  })
+  @IsNumber()
+  diet: number;
 }

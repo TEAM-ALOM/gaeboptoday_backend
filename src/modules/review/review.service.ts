@@ -9,13 +9,35 @@ export class ReviewService {
   constructor(private readonly prismaservice: PrismaService) {}
 
   async create(data: CreateReviewDto, userId): Promise<Review> {
-    const menu = this.prismaservice.menu.findFirst({
+    const offset = 9 * 60 * 60 * 1000;
+    const queryDate =
+      new Date(`${2024}-${data.month}-${data.day}`).getTime() + offset;
+    const weekly = await this.prismaservice.weekly.findFirst({
+      include: {
+        content: {
+          include: {
+            lunch: { include: { reviews: true } },
+            dinner: { include: { reviews: true } },
+          },
+        },
+      },
       where: {
-        name: data.menu,
+        day: { equals: new Date(queryDate) },
       },
     });
-    if (!menu) {
-      throw new BadRequestException('메뉴 이름이 잘못되었습니다.');
+    let menu;
+    if (data.diet == 0) {
+      menu = weekly.content[0].lunch.filter((item) => item.name == data.menu);
+    }
+    if (menu.length == 0) {
+      throw new BadRequestException('메뉴 정보가 잘못되었습니다.');
+    }
+
+    const existReview = await this.prismaservice.review.findFirst({
+      where: { month: data.month, day: data.day, writer_id: userId },
+    });
+    if (existReview) {
+      throw new BadRequestException('이미 이 식단에 대해 리뷰를 작성하셨습니다.')
     }
     const review = await this.prismaservice.review.create({
       data: {
@@ -23,6 +45,9 @@ export class ReviewService {
         substance: data.substance,
         menu: { connect: { name: data.menu } },
         writer: { connect: { studentCode: userId } },
+        month: data.month,
+        day: data.day,
+        diet: data.diet,
       },
     });
 
