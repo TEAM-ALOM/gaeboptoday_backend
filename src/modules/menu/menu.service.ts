@@ -73,8 +73,9 @@ export class MenuService {
 
       for (let i = 0; i < weeklies.length; i++) {
         const daily = weeklies[i];
+        console.log(daily);
         if (daily.length < 8) {
-          return;
+          continue;
         }
         await this.prismaservice.menu.createMany({
           data: daily.map((item) => {
