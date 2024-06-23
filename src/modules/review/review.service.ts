@@ -28,6 +28,8 @@ export class ReviewService {
     let menu;
     if (data.diet == 0) {
       menu = weekly.content[0].lunch.filter((item) => item.name == data.menu);
+    } else {
+      menu = weekly.content[0].dinner.filter((item) => item.name == data.menu);
     }
     if (!menu) {
       throw new BadRequestException('메뉴 정보가 잘못되었습니다.');
@@ -37,7 +39,9 @@ export class ReviewService {
       where: { month: data.month, day: data.day, writer_id: userId },
     });
     if (existReview) {
-      throw new BadRequestException('이미 이 식단에 대해 리뷰를 작성하셨습니다.')
+      throw new BadRequestException(
+        '이미 이 식단에 대해 리뷰를 작성하셨습니다.',
+      );
     }
     const review = await this.prismaservice.review.create({
       data: {
