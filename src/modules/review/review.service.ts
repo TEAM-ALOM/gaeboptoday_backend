@@ -25,6 +25,9 @@ export class ReviewService {
         day: { equals: new Date(queryDate) },
       },
     });
+    if (!weekly) {
+      throw new BadRequestException('메뉴 정보가 잘못되었습니다.');
+    }
     let menu;
     if (data.diet == 0) {
       menu = weekly.content[0].lunch.filter((item) => item.name == data.menu);
@@ -36,19 +39,32 @@ export class ReviewService {
     }
 
     const existReview = await this.prismaservice.review.findFirst({
-      where: { menu_name: data.menu, month: data.month, day: data.day, diet: data.diet, writer_id: userId },
+      where: {
+        menu_name: data.menu,
+        month: data.month,
+        day: data.day,
+        diet: data.diet,
+        writer_id: userId,
+      },
     });
     if (existReview) {
       throw new BadRequestException(
         '이미 이 식단에 대해 리뷰를 작성하셨습니다.',
       );
     }
+
+    const user = await this.prismaservice.user.findFirst({
+      where: { studentCode: userId },
+    });
+    console.log(`${user.major} ${user.studentCode.substring(0, 2)}학번`);
+
     const review = await this.prismaservice.review.create({
       data: {
         rate: data.rate,
         substance: data.substance,
         menu: { connect: { name: data.menu } },
         writer: { connect: { studentCode: userId } },
+        nickname: `${user.major} ${user.studentCode.substring(0, 2)}학번`,
         month: data.month,
         day: data.day,
         diet: data.diet,

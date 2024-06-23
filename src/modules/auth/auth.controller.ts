@@ -40,6 +40,7 @@ export class AuthController {
     const payload = {
       studentCode: loginData.studentCode,
       name: loginData.name,
+      major: loginData.major,
     };
 
     const user = await this.userservice.getUser(loginData.studentCode);

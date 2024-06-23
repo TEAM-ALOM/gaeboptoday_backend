@@ -18,4 +18,12 @@ export class CreateUserDto {
   @Expose({ name: 'studentCode' })
   @IsString()
   studentCode: string;
+
+  @ApiProperty({
+    example: '컴퓨터공학',
+    description: '사용자의 전공입니다.',
+  })
+  @Expose({ name: 'major' })
+  @IsString()
+  major: string;
 }

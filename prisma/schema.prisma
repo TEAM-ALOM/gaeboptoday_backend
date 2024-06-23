@@ -12,6 +12,7 @@ model User {
   name String @unique
   review Review[]
   star Star[]
+  major String
 }
 
 model Menu {
@@ -46,6 +47,7 @@ model Review {
   menu_name String
   writer User? @relation(fields: [writer_id], references: [studentCode], onDelete: Cascade)
   writer_id String?
+  nickname String
   rate Float
   substance String?
   month Int

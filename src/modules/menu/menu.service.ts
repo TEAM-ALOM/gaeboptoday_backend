@@ -71,7 +71,8 @@ export class MenuService {
         weeklies.push(temp);
       }
 
-      weeklies.forEach(async (daily) => {
+      for (let i = 0; i < weeklies.length; i++) {
+        const daily = weeklies[i];
         if (daily.length < 8) {
           return;
         }
@@ -81,7 +82,7 @@ export class MenuService {
           }),
           skipDuplicates: true,
         });
-      });
+      }
 
       for (let i = 0; i < weeklies.length; i++) {
         const lunch: string[] = [],
