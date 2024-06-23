@@ -15,6 +15,7 @@ import {
   ApiBody,
   ApiConsumes,
   ApiOperation,
+  ApiParam,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -65,7 +66,7 @@ export class MenuController {
 
   @Get()
   @ApiOperation({
-    summary: '메뉴 전부 가져오기',
+    summary: '메뉴 전부 가져오기(평점 순 정렬)',
   })
   @ApiResponse({
     type: ResponseDto<Menu[]>,
@@ -76,17 +77,32 @@ export class MenuController {
     return ResponseDto.success('inquiry_success', result);
   }
 
-  
   @Get('/:name')
+  @ApiOperation({
+    summary: '단일 메뉴 조회',
+  })
+  @ApiParam({
+    name: 'name',
+    type: String,
+    description: '메뉴 이름',
+  })
+  @ApiResponse({
+    type: ResponseDto<Menu>,
+  })
   async getMenu(@Param('name') name: string): Promise<ResponseDto<Menu>> {
     const result = await this.menuservice.findOneByName(name);
-    
+
     return ResponseDto.success('inquiry_success', result);
   }
 
   @Post('/:name')
   @ApiOperation({
     summary: '메뉴 즐겨찾기',
+  })
+  @ApiParam({
+    name: 'name',
+    type: String,
+    description: '메뉴 이름',
   })
   @UseGuards(JwtAccessGuard)
   async starMenu(@Param('name') name: string, @Req() request) {

@@ -72,6 +72,9 @@ export class MenuService {
       }
 
       weeklies.forEach(async (daily) => {
+        if (daily.length < 8) {
+          return;
+        }
         await this.prismaservice.menu.createMany({
           data: daily.map((item) => {
             return { name: item };
@@ -134,7 +137,11 @@ export class MenuService {
   }
 
   async findMany(): Promise<Menu[]> {
-    return this.prismaservice.menu.findMany();
+    return this.prismaservice.menu.findMany({
+      orderBy: {
+        rating: 'desc',
+      },
+    });
   }
 
   async starMenu(name: string, userId: string) {
