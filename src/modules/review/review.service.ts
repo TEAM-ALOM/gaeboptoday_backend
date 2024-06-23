@@ -36,7 +36,7 @@ export class ReviewService {
     }
 
     const existReview = await this.prismaservice.review.findFirst({
-      where: { month: data.month, day: data.day, writer_id: userId },
+      where: { menu_name: data.menu, month: data.month, day: data.day, diet: data.diet, writer_id: userId },
     });
     if (existReview) {
       throw new BadRequestException(
