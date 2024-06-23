@@ -29,7 +29,7 @@ export class ReviewService {
     if (data.diet == 0) {
       menu = weekly.content[0].lunch.filter((item) => item.name == data.menu);
     }
-    if (menu.length == 0) {
+    if (!menu) {
       throw new BadRequestException('메뉴 정보가 잘못되었습니다.');
     }
 
