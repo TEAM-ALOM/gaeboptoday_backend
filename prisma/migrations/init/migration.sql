@@ -139,3 +139,4 @@ ALTER TABLE "_daily_dinner" ADD CONSTRAINT "_daily_dinner_A_fkey" FOREIGN KEY ("
 
 -- AddForeignKey
 ALTER TABLE "_daily_dinner" ADD CONSTRAINT "_daily_dinner_B_fkey" FOREIGN KEY ("B") REFERENCES "Menu"("name") ON DELETE CASCADE ON UPDATE CASCADE;
+
