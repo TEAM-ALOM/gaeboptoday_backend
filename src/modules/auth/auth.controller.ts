@@ -15,7 +15,7 @@ import { AuthService } from './auth.service';
 import { Response } from 'express';
 import { UserService } from '../user/user.service';
 import { JwtAccessGuard } from './guard/jwt-access.guard';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiHeader, ApiHeaders, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @Injectable()
 @Controller('/auth')
@@ -27,12 +27,21 @@ export class AuthController {
   ) {}
 
   @Post('/login')
+  @ApiOperation({
+    summary: '로그인',
+  })
+  @ApiBody({
+    type: LoginDTO,
+  })
+  @ApiResponse({
+    type: ResponseDto<{ message: 'login_success'; access_token: string }>,
+  })
   async login(
     @Req() request: Request,
     @Res() response: Response,
     @Body() data: LoginDTO,
     @Res({ passthrough: true }) res: Response,
-  ): Promise<ResponseDto<any>> {
+  ): Promise<ResponseDto<{ access_token: string }>> {
     const loginData = await this.authservice.login(data);
     if (!loginData) {
       throw new UnauthorizedException('login_failed');
@@ -57,6 +66,10 @@ export class AuthController {
 
   @Get('/login')
   @UseGuards(JwtAccessGuard)
+  @ApiOperation({
+    summary: '로그인 확인용 api'
+  })
+  @ApiBearerAuth('token')
   logincheck(@Req() req: any): ResponseDto<any> {
     if (req.user) {
       return ResponseDto.success('로그인 되어있습니다.', {

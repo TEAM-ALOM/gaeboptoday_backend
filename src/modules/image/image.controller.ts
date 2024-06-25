@@ -12,6 +12,7 @@ import {
   ApiConsumes,
   ApiOperation,
   ApiResponse,
+  ApiTags,
 } from '@nestjs/swagger';
 import { ResponseDto } from 'src/types/response.dto';
 import { ImageService } from './image.service';
@@ -20,6 +21,7 @@ import { Menu } from '@prisma/client';
 
 @Injectable()
 @Controller('/image')
+@ApiTags('Image')
 export class ImageController {
   constructor(private readonly imageservice: ImageService) {}
 
@@ -56,7 +58,12 @@ export class ImageController {
     summary: '이미지 주소와 메뉴를 매핑',
   })
   @ApiBody({ type: ImageMappingDto })
-  async imageMapping(@Body() data: ImageMappingDto): Promise<ResponseDto<Menu>> {
+  @ApiResponse({
+    type: ResponseDto<Menu>,
+  })
+  async imageMapping(
+    @Body() data: ImageMappingDto,
+  ): Promise<ResponseDto<Menu>> {
     const result = await this.imageservice.imageMapping(data);
 
     return ResponseDto.success('mapping_success', result);

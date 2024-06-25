@@ -12,6 +12,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { MenuService } from './menu.service';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiConsumes,
   ApiOperation,
@@ -104,6 +105,7 @@ export class MenuController {
     type: String,
     description: '메뉴 이름',
   })
+  @ApiBearerAuth('token')
   @UseGuards(JwtAccessGuard)
   async starMenu(@Param('name') name: string, @Req() request) {
     const result = await this.menuservice.starMenu(

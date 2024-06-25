@@ -10,7 +10,6 @@ export class UnauthorizedExceptionFilter implements ExceptionFilter {
     const request = ctx.getRequest<Request>();
     const status = exception.getStatus();
 
-    // return ResponseDto.error('Unauthorized', null, status)
     response
       .status(status)
       .json(ResponseDto.error('Unauthorized', null, status));

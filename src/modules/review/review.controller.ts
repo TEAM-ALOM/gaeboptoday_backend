@@ -14,6 +14,7 @@ import { ReviewService } from './review.service';
 import { CreateReviewDto } from './review.dto';
 import { Review } from '@prisma/client';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiOperation,
   ApiParam,
@@ -33,9 +34,9 @@ export class ReviewController {
   @Post()
   @ApiOperation({ summary: '리뷰 작성 API' })
   @ApiBody({
-    description: '사용자 생성 정보 DTO',
     type: CreateReviewDto,
   })
+  @ApiBearerAuth('token')
   @ApiResponse({
     type: ResponseDto<Review>,
   })
@@ -77,6 +78,7 @@ export class ReviewController {
     type: String,
     name: 'id',
   })
+  @ApiBearerAuth('token')
   @ApiBody({
     description: '수정할 데이터입니다. CreateReviewDto의 Partial 타입입니다.',
   })
@@ -107,6 +109,7 @@ export class ReviewController {
     type: String,
     name: 'id',
   })
+  @ApiBearerAuth('token')
   @ApiResponse({
     type: ResponseDto<Review>,
   })

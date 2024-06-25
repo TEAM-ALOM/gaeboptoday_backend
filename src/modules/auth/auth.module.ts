@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { UserModule } from '../user/user.module';
 import { AuthController } from './auth.controller';
@@ -11,8 +11,8 @@ import { JwtAccessGuard } from './guard/jwt-access.guard';
     JwtModule.register({
       secret: '1234qwer',
     }),
+    forwardRef(() => UserModule),
     PassportModule,
-    UserModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtAccessGuard],
