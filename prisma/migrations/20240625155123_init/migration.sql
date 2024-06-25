@@ -2,6 +2,7 @@
 CREATE TABLE "User" (
     "studentCode" TEXT NOT NULL,
     "name" TEXT NOT NULL,
+    "major" TEXT NOT NULL,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("studentCode")
 );
@@ -37,8 +38,12 @@ CREATE TABLE "Review" (
     "id" TEXT NOT NULL,
     "menu_name" TEXT NOT NULL,
     "writer_id" TEXT,
+    "nickname" TEXT NOT NULL,
     "rate" DOUBLE PRECISION NOT NULL,
     "substance" TEXT,
+    "month" INTEGER NOT NULL,
+    "day" INTEGER NOT NULL,
+    "diet" INTEGER NOT NULL,
 
     CONSTRAINT "Review_pkey" PRIMARY KEY ("id")
 );
