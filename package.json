@@ -12,7 +12,7 @@
     "start:dev": "export NODE_ENV=development; nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "export NODE_ENV=product; node ./dist/main",
-    "prisma:migrate:prod": "dotenv -e .env.product -- prisma migrate deploy",
+    "prisma:migrate:prod": "dotenv -e .env.product -- npx prisma migrate deploy",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",
