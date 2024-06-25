@@ -35,8 +35,7 @@ export class AuthService {
       const result = await this.authDelegator.getUserProfile(loginRequestDto);
       return result;
     } catch (e) {
-      console.log(e);
-      throw new UnauthorizedException(e);
+      throw new UnauthorizedException({ message: '아이디와 비밀번호를 확인해주세요.'});
     }
   }
 
