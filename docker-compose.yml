@@ -6,9 +6,9 @@ services:
       - TZ=Asia/Seoul
     image: siyoun/gaeboptoday-server:latest
     command: >
-      sh -c "npm prisma:migrate:prod &&
+      sh -c "npm run prisma:migrate:prod &&
              npx prisma generate &&
-             npm start:prod"
+             npm run start:prod"
     env_file:
       - .env.product
     ports:
