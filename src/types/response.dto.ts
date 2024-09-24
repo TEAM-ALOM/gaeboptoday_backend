@@ -52,7 +52,7 @@ export class ResponseDto<T> {
     return response;
   }
 
-  static success<T>(message: string, data?: T , status = 200) {
+  static success<T>(message: string, data?: T, status = 200) {
     return ResponseDto.of<T>({
       requestId: randomUUID(),
       message,
@@ -61,7 +61,6 @@ export class ResponseDto<T> {
       timestamp: new Date(),
     });
   }
-
 
   static created<T>(message: string, data?: T, status = 201) {
     return ResponseDto.of<T>({

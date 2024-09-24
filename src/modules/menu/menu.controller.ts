@@ -58,7 +58,7 @@ export class MenuController {
   async uploadMenuImage(
     @UploadedFile() file: Express.Multer.File,
   ): Promise<ResponseDto<any>> {
-    const result = await this.menuservice.ImageReading(file);
+    await this.menuservice.ImageReading(file);
 
     const data = await this.dataservice.getData();
 

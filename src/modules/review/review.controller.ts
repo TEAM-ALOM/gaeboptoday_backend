@@ -119,10 +119,7 @@ export class ReviewController {
     @Param('id') id: string,
     @Req() request,
   ): Promise<ResponseDto<void>> {
-    const result = await this.reviewservice.deleteOneById(
-      id,
-      request.user.studentCode,
-    );
+    await this.reviewservice.deleteOneById(id, request.user.studentCode);
     return ResponseDto.success('delete_success');
   }
 }

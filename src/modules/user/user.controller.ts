@@ -1,23 +1,17 @@
 import {
-  Body,
   Controller,
   Get,
   Injectable,
   Param,
-  Post,
   Req,
-  Response,
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { UserService } from './user.service';
-import { CreateUserDto } from './user.dto';
 import { User } from '@prisma/client';
 import {
   ApiBearerAuth,
-  ApiBody,
-  ApiCreatedResponse,
   ApiOperation,
   ApiParam,
   ApiResponse,

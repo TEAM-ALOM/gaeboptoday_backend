@@ -1,11 +1,12 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 import { HttpService } from '@nestjs/axios';
 import { BadRequestException, HttpException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { randomUUID } from 'crypto';
 import { EnvironmentVariables } from '../config/config.validation';
-import { catchError, firstValueFrom, map } from 'rxjs';
+import { catchError, firstValueFrom } from 'rxjs';
 import { PrismaService } from '../prisma/prisma.service';
-import { Data, Weekly, Daily, Menu } from '@prisma/client';
+import { Data, Menu } from '@prisma/client';
 
 @Injectable()
 export class MenuService {

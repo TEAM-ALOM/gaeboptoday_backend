@@ -15,7 +15,13 @@ import { AuthService } from './auth.service';
 import { Response } from 'express';
 import { UserService } from '../user/user.service';
 import { JwtAccessGuard } from './guard/jwt-access.guard';
-import { ApiBearerAuth, ApiBody, ApiHeader, ApiHeaders, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 @Injectable()
 @Controller('/auth')
@@ -40,7 +46,6 @@ export class AuthController {
     @Req() request: Request,
     @Res() response: Response,
     @Body() data: LoginDTO,
-    @Res({ passthrough: true }) res: Response,
   ): Promise<ResponseDto<{ access_token: string }>> {
     const loginData = await this.authservice.login(data);
     if (!loginData) {
@@ -54,7 +59,7 @@ export class AuthController {
 
     const user = await this.userservice.getUser(loginData.studentCode);
     if (!user) {
-      const result = await this.userservice.create(payload);
+      await this.userservice.create(payload);
     }
 
     const access_token = this.authservice.createAccessToken(payload);
@@ -67,7 +72,7 @@ export class AuthController {
   @Get('/login')
   @UseGuards(JwtAccessGuard)
   @ApiOperation({
-    summary: '로그인 확인용 api'
+    summary: '로그인 확인용 api',
   })
   @ApiBearerAuth('token')
   logincheck(@Req() req: any): ResponseDto<any> {

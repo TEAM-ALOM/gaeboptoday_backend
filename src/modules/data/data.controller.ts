@@ -43,7 +43,9 @@ export class DataController {
     type: DataQueryDto,
   })
   @Post()
-  async queryData(@Body() data: DataQueryDto): Promise<ResponseDto<Data | Data[] | Weekly>> {
+  async queryData(
+    @Body() data: DataQueryDto,
+  ): Promise<ResponseDto<Data | Data[] | Weekly>> {
     const result = await this.dataservice.queryData(data);
     return ResponseDto.success('inquery_success', result);
   }
@@ -58,6 +60,6 @@ export class DataController {
   })
   @Get('/:id')
   async applyData(@Param('id') id: string) {
-    const result = await this.dataservice.deleteManyExceptOne(id);
+    await this.dataservice.deleteManyExceptOne(id);
   }
 }

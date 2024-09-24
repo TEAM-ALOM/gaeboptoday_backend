@@ -7,7 +7,10 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { User } from '@prisma/client';
-import sejongAuthDelegator, { AuthDelegator, LoginRequestDto, ProfileResponseDto } from '@coffee-tree/sejong-auth-delegator';
+import sejongAuthDelegator, {
+  AuthDelegator,
+  ProfileResponseDto,
+} from '@coffee-tree/sejong-auth-delegator';
 import { AccessTokenPayload } from './types/access-token.payload';
 
 export class AuthService {
@@ -35,7 +38,9 @@ export class AuthService {
       const result = await this.authDelegator.getUserProfile(loginRequestDto);
       return result;
     } catch (e) {
-      throw new UnauthorizedException({ message: '아이디와 비밀번호를 확인해주세요.'});
+      throw new UnauthorizedException({
+        message: '아이디와 비밀번호를 확인해주세요.',
+      });
     }
   }
 
